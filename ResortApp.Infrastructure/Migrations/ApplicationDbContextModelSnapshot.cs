@@ -41,7 +41,8 @@ namespace ResortApp.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("Occupancy")
                         .HasColumnType("int");
@@ -90,6 +91,82 @@ namespace ResortApp.Infrastructure.Migrations
                             Price = 400.0,
                             Sqft = 750
                         });
+                });
+
+            modelBuilder.Entity("ResortApp.Domain.Entities.VillaNumber", b =>
+                {
+                    b.Property<int>("Villa_Number")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SpecialDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VillaID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Villa_Number");
+
+                    b.HasIndex("VillaID");
+
+                    b.ToTable("VillaNumbers");
+
+                    b.HasData(
+                        new
+                        {
+                            Villa_Number = 101,
+                            VillaID = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 102,
+                            VillaID = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 103,
+                            VillaID = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 104,
+                            VillaID = 1
+                        },
+                        new
+                        {
+                            Villa_Number = 201,
+                            VillaID = 2
+                        },
+                        new
+                        {
+                            Villa_Number = 202,
+                            VillaID = 2
+                        },
+                        new
+                        {
+                            Villa_Number = 203,
+                            VillaID = 2
+                        },
+                        new
+                        {
+                            Villa_Number = 301,
+                            VillaID = 3
+                        },
+                        new
+                        {
+                            Villa_Number = 302,
+                            VillaID = 3
+                        });
+                });
+
+            modelBuilder.Entity("ResortApp.Domain.Entities.VillaNumber", b =>
+                {
+                    b.HasOne("ResortApp.Domain.Entities.Villa", "Villa")
+                        .WithMany()
+                        .HasForeignKey("VillaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Villa");
                 });
 #pragma warning restore 612, 618
         }
