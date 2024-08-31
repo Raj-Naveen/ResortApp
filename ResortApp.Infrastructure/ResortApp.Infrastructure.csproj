@@ -17,9 +17,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+    <ItemGroup>
+		<ProjectReference Include="..\ResortApp.Application\ResortApp.Application.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ResortApp.Domain\ResortApp.Domain.csproj" />
-  </ItemGroup>
 
 </Project>

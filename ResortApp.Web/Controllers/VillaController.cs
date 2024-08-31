@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ResortApp.Application.Common.Interfaces;
 using ResortApp.Domain.Entities;
 using ResortApp.Infrastructure.Data;
 
@@ -6,16 +7,16 @@ namespace ResortApp.Web.Controllers
 {
     public class VillaController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public VillaController(ApplicationDbContext db)
+        public VillaController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var villas = _db.Villas.ToList();
+            var villas = _unitOfWork.Villa.GetAll();
             return View(villas);// Whatever passes in this View that will be ( model=> @model) value in Index.cshtml file.
         }
         public IActionResult Create()// The view name is must exactly match the action name.
@@ -31,8 +32,8 @@ namespace ResortApp.Web.Controllers
             }
             if (ModelState.IsValid)//This is server side validation
             {
-                _db.Villas.Add(obj);
-                _db.SaveChanges();
+                _unitOfWork.Villa.Add(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "The villa has been created successfully.";
                 return RedirectToAction("Index");
             }
@@ -40,7 +41,9 @@ namespace ResortApp.Web.Controllers
         }
         public IActionResult Update(int villaID)
         {
-            Villa? obj=_db.Villas.FirstOrDefault(x => x.ID == villaID);//There are many ways to retrive data  from database
+            //Villa? obj=_db.Villas.FirstOrDefault(x => x.ID == villaID);//There are many ways to retrive data  from database
+            Villa? obj = _unitOfWork.Villa.Get(x => x.ID == villaID);
+
             //Villa obj = _db.Villas.Find(villaID);
             //Villa obj = _db.Villas.Where(x=> x.Price >50 && x.Occupancy >0).FirstOrDefault();
             if (obj == null)
@@ -54,8 +57,8 @@ namespace ResortApp.Web.Controllers
         {
             if (ModelState.IsValid)//This is server side validation
             {
-                _db.Villas.Update(obj);
-                _db.SaveChanges();
+                _unitOfWork.Villa.Update(obj);
+                _unitOfWork.Save();
                 TempData["success"] = "The villa has been updated successfully.";
                 return RedirectToAction("Index");
             }
@@ -64,7 +67,7 @@ namespace ResortApp.Web.Controllers
 
         public IActionResult Delete(int villaID)
         {
-            Villa? obj = _db.Villas.FirstOrDefault(x => x.ID == villaID);//There are many ways to retrive data  from database
+            Villa? obj = _unitOfWork.Villa.Get(x => x.ID == villaID);//There are many ways to retrive data  from database
             
             if (obj is null)
             {
@@ -75,11 +78,11 @@ namespace ResortApp.Web.Controllers
         [HttpPost]
         public IActionResult Delete(Villa obj)
         {
-            Villa? objFromDb = _db.Villas.FirstOrDefault(x => x.ID == obj.ID);
+            Villa? objFromDb = _unitOfWork.Villa.Get(x => x.ID == obj.ID);
             if (objFromDb is not null)
             {
-                _db.Villas.Remove(objFromDb);
-                _db.SaveChanges();
+                _unitOfWork.Villa.Remove(objFromDb);
+                _unitOfWork.Save();
                 TempData["success"] = "The villa has been deleted successfully.";
                 return RedirectToAction("Index");
             }
